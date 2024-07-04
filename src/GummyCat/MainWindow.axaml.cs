@@ -18,6 +18,7 @@ using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Analysis;
 using Microsoft.Diagnostics.Tracing.Analysis.GC;
 using Microsoft.Diagnostics.Tracing.Parsers;
+using MsBox.Avalonia;
 using Newtonsoft.Json;
 
 namespace GummyCat;
@@ -99,7 +100,7 @@ public partial class MainWindow : Window
 
     public ObservableCollection<Gc> GCs { get; } = new();
 
-    private void Window_Loaded(object sender, RoutedEventArgs e)
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
         var args = Environment.GetCommandLineArgs();
 
@@ -111,7 +112,15 @@ public partial class MainWindow : Window
             }
             else
             {
-                Load(args[1]);
+                try
+                {
+                    Load(args[1]);
+                }
+                catch (IOException ex)
+                {
+                    await MessageBoxManager.GetMessageBoxStandard("Error", ex.Message, icon: MsBox.Avalonia.Enums.Icon.Error)
+                        .ShowAsync();
+                }
             }
         }
 
@@ -425,7 +434,7 @@ public partial class MainWindow : Window
                     }
                 }
             }
-            
+
             // Remove regions that weren't marked
             PanelRegions.Children.RemoveAll(regions.Where(r => r.Tag != null));
 
@@ -434,7 +443,7 @@ public partial class MainWindow : Window
                 // Add the placeholders
                 ulong lastRegionEnd = 0;
 
-                for (int i = 0; i < PanelRegions.Children.Count; i++)  
+                for (int i = 0; i < PanelRegions.Children.Count; i++)
                 {
                     var region = PanelRegions.Children[i] as Region;
 

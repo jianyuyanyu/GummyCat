@@ -25,7 +25,7 @@
     <Rectangle x:Name="Gen1Rectangle" Width="0" VerticalAlignment="Stretch" HorizontalAlignment="Left" IsVisible="False" />
     <Rectangle x:Name="Gen2Rectangle" Width="0" VerticalAlignment="Stretch" HorizontalAlignment="Left" IsVisible="False" />
 
-    <Rectangle x:Name="FillRectangle" HorizontalAlignment="Left" VerticalAlignment="Stretch" Fill="Black" Opacity=".2" Width="0">
+    <Rectangle x:Name="FillRectangle" HorizontalAlignment="Left" VerticalAlignment="Stretch" Fill="Black" Opacity=".2" Width="0" RenderTransformOrigin="0,0">
       <Rectangle.Transitions>
         <Transitions>
           <TransformOperationsTransition Property="RenderTransform" Duration="0:0:1"/>

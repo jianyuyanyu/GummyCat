@@ -17,37 +17,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
-      - name: Update PackageVersion in csproj
-        run: |
-          sed -i -E "s|<PackageVersion>[^<]+</PackageVersion>|<PackageVersion>${{ inputs.version }}</PackageVersion>|" src/GummyCat/GummyCat.csproj
-          grep -q "<PackageVersion>${{ inputs.version }}</PackageVersion>" src/GummyCat/GummyCat.csproj
-
-      - name: Commit and tag
+      - name: Tag release
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/GummyCat/GummyCat.csproj
-          git commit -m "Release v${{ inputs.version }}"
           git tag "v${{ inputs.version }}"
-          git push origin HEAD
           git push origin "v${{ inputs.version }}"
 
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore -c Release
+        run: dotnet build --no-restore -c Release -p:PackageVersion=${{ inputs.version }}
 
       - name: Pack
-        run: dotnet pack src/GummyCat/GummyCat.csproj --no-build -c Release -o artifacts
+        run: dotnet pack src/GummyCat/GummyCat.csproj --no-build -c Release -o artifacts -p:PackageVersion=${{ inputs.version }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
